@@ -1,4 +1,4 @@
-function [next_game_state, reward, done] = step_scopa_env_v2(game_state, action, was_capture_possible)
+function [next_game_state, reward, done] = step_scopa_env(game_state, action, was_capture_possible)
     % This function executes a single step (playing one card) in the Scopa environment,
     % calculates the appropriate reward, and determines if the game has ended.
 

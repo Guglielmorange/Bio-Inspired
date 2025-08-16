@@ -70,7 +70,7 @@ function debug_qualitative_analysis(agent_file_path)
                 fprintf('Opponent played: %s.\n', format_cards(chosen_action.played_card));
             end
             
-            [gameState, ~, done] = step_scopa_env_v2(gameState, chosen_action, was_capture_possible);
+            [gameState, ~, done] = step_scopa_env(gameState, chosen_action, was_capture_possible);
         else
             gameState.current_player = 3 - cp;
         end

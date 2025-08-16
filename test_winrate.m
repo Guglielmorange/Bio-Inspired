@@ -8,7 +8,7 @@ function test_winrate(agentFile, opponentFile)
     
     % --- Handle Input Arguments ---
     if nargin < 1
-        agentFile = fullfile('Results', 'scopa_agent_final_p2_stable.mat');
+        agentFile = fullfile('Results', 'scopa_agent_final.mat');
     end
     if nargin < 2
         opponentFile = 'random'; % Default to a random opponent
@@ -107,7 +107,7 @@ function test_winrate(agentFile, opponentFile)
                         end
                     end
                     
-                    [gameState, ~, done] = step_scopa_env_v2(gameState, chosen_action, was_capture_possible);
+                    [gameState, ~, done] = step_scopa_env(gameState, chosen_action, was_capture_possible);
                 else
                     gameState.current_player = 3 - cp;
                 end
