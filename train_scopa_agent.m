@@ -1,4 +1,4 @@
-function [qNetwork, episodeRewards] = train_scopa_agent_v2()
+function [qNetwork, episodeRewards] = train_scopa_agent()
     % --- Hyperparameters for Phase 2 ---
     numEpisodes = 25000;
     initialLearningRate = 0.00025;
@@ -151,7 +151,7 @@ function [qNetwork, episodeRewards] = train_scopa_agent_v2()
         end
     end
     
-    finalFileName = 'scopa_agent_final_p2_stable.mat';
+    finalFileName = 'scopa_agent_final.mat';
     save(fullfile(resultsFolder, finalFileName), 'qNetwork', 'episodeRewards');
     fprintf('Final agent saved to: %s\n', fullfile(resultsFolder, finalFileName));
 end
