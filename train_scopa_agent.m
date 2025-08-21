@@ -1,6 +1,4 @@
 function [qNetwork, episodeRewards] = train_scopa_agent(params)
-    % --- This script now takes a 'params' struct as input ---
-
     % --- Hyperparameters (loaded from the input struct) ---
     numEpisodes = params.numEpisodes;
     initialLearningRate = params.initialLearningRate;
@@ -18,9 +16,8 @@ function [qNetwork, episodeRewards] = train_scopa_agent(params)
     bufferCapacity = 100000;
     opponentUpdateFrequency = 2500;
     opponentPoolSize = 30;
-    resultsFolder = 'Results';
     
-    % --- Initialize Networks, Buffer, etc. (No changes here) ---
+    % --- Initialization ---
     qNetwork = create_network();
     targetNetwork = create_network();
     targetNetwork.Learnables = qNetwork.Learnables;
@@ -116,8 +113,9 @@ function [qNetwork, episodeRewards] = train_scopa_agent(params)
             targetNetwork.Learnables = t_params;
         end
         
-     
+        % --- CHANGE: Add intermediate progress notification ---
+        if mod(episode, 5000) == 0 && episode > 0
+            fprintf('... Progress: Episode %d / %d ...\n', episode, numEpisodes);
+        end
     end
-    
-
 end
