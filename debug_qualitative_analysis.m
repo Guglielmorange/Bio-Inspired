@@ -1,9 +1,9 @@
 function debug_qualitative_analysis(agent_file_path)
-    % --- Qualitative Analysis Script ---
+    % Qualitative Analysis Script
     fprintf('--- Starting Qualitative Analysis ---\n');
 
     if nargin < 1
-        agent_file_path = fullfile('Results', 'scopa_agent_final_p2_stable.mat');
+        agent_file_path = fullfile('Results', 'scopa_agent_final.mat');
     end
     
     try

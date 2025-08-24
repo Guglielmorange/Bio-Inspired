@@ -1,20 +1,17 @@
 function test_winrate(agentFile, opponentFile)
-    % --- Agent Win Rate Evaluation Script (Full Game to 11) ---
-    % Evaluates a trained agent against a specified opponent agent or a random player.
+    % Agent Win Rate Evaluation Script
 
-    % --- Parameters ---
     numGames = 100;
     winningScore = 11;
     
-    % --- Handle Input Arguments ---
     if nargin < 1
         agentFile = fullfile('Results', 'scopa_agent_final.mat');
     end
     if nargin < 2
-        opponentFile = 'random'; % Default to a random opponent
+        opponentFile = 'random'; % Default to a random opponent, you can also pick a previous version of the agent
     end
 
-    % --- Load the Trained Agent ---
+    % Trained Agent
     fprintf('Loading agent from %s...\n', agentFile);
     try
         agentData = load(agentFile, 'qNetwork');
@@ -23,7 +20,7 @@ function test_winrate(agentFile, opponentFile)
         error('Failed to load agent file: %s', agentFile);
     end
     
-    % --- Load Opponent Agent or Set to Random ---
+    % Opponent
     isOpponentRandom = false;
     if strcmpi(opponentFile, 'random')
         isOpponentRandom = true;
@@ -56,7 +53,6 @@ function test_winrate(agentFile, opponentFile)
             done = false;
             
             while ~done
-                % This logic correctly handles re-dealing cards mid-game
                 if isempty(gameState.players(1).hand) && isempty(gameState.players(2).hand)
                     if isempty(gameState.deck)
                         done = true;
@@ -75,7 +71,7 @@ function test_winrate(agentFile, opponentFile)
                     was_capture_possible = false;
                     for k = 1:length(valid_actions); if strcmp(valid_actions{k}.type, 'capture'); was_capture_possible = true; break; end; end
 
-                    if cp == 1 % Agent's turn
+                    if cp == 1 
                         currentState = preprocess_state(gameState);
                         all_q_values = predict(qNetwork, dlarray(currentState, 'CB'));
                         qValues_data = extractdata(all_q_values);
@@ -88,7 +84,7 @@ function test_winrate(agentFile, opponentFile)
                         [~, chosen_action_idx] = max(valid_q_values);
                         chosen_action = valid_actions{chosen_action_idx};
                     
-                    else % Opponent's turn
+                    else 
                         if isOpponentRandom
                             chosen_action_idx = randi(length(valid_actions));
                             chosen_action = valid_actions{chosen_action_idx};

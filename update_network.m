@@ -1,5 +1,4 @@
 function [qNetwork, optimizerState, loss] = update_network(qNetwork, targetNetwork, optimizerState, batch, gamma, learningRate, iteration)
-    % --- This is the update function for a standard (uniform) replay buffer ---
     
     % Re-format the batch data
     states = dlarray(cat(2, batch.state), 'CB');
@@ -29,7 +28,7 @@ function [qNetwork, optimizerState, loss] = update_network(qNetwork, targetNetwo
         qNetwork.Learnables, gradients, optimizerState.averageGrad, optimizerState.averageSqGrad, iteration, learningRate);
 end
 
-% --- Gradient function for Huber Loss (no importance sampling) ---
+% Gradient function for Huber Loss
 function [gradients, loss] = modelGradients_Huber(net, states, actions, targets)
     qPred = predict(net, states);
     

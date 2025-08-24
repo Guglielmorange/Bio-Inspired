@@ -1,12 +1,10 @@
-% create_network.m (Updated for Dueling Architecture)
-
 function qNetwork = create_network()
-    newStateSize = 324; % From your preprocess_state.m
+    newStateSize = 324; 
 
     % Create the layer graph
     lgraph = layerGraph();
 
-    % --- Shared Feature Learning Base ---
+    % Shared Feature Learning Base
     sharedLayers = [
         featureInputLayer(newStateSize, 'Name', 'state')
         fullyConnectedLayer(256, 'Name', 'fc1', 'WeightsInitializer', 'he')
@@ -14,27 +12,27 @@ function qNetwork = create_network()
     ];
     lgraph = addLayers(lgraph, sharedLayers);
 
-    % --- Value Stream (outputs a single scalar V(s)) ---
+    % Value Stream 
     valueStream = [
         fullyConnectedLayer(128, 'Name', 'fc_value_1')
         leakyReluLayer(0.01, 'Name', 'leaky_value')
-        fullyConnectedLayer(1, 'Name', 'value') % Outputs a single value
+        fullyConnectedLayer(1, 'Name', 'value') 
     ];
     lgraph = addLayers(lgraph, valueStream);
     lgraph = connectLayers(lgraph, 'leaky1', 'fc_value_1');
 
-    % --- Advantage Stream (outputs a value for each action A(s,a)) ---
+    % Advantage Stream 
     advantageStream = [
         fullyConnectedLayer(128, 'Name', 'fc_advantage_1')
         leakyReluLayer(0.01, 'Name', 'leaky_advantage')
-        fullyConnectedLayer(40, 'Name', 'advantage') % 40 actions
+        fullyConnectedLayer(40, 'Name', 'advantage') 
     ];
     lgraph = addLayers(lgraph, advantageStream);
     lgraph = connectLayers(lgraph, 'leaky1', 'fc_advantage_1');
     
-    % --- Aggregation Layer to combine V(s) and A(s,a) ---
+    % Aggregation Layer to combine outputs
     lgraph = addLayers(lgraph, additionLayer(2, 'Name', 'add'));
-    lgraph = addLayers(lgraph, MeanSubtractionLayer('mean_sub_layer', 40)); % Custom Layer
+    lgraph = addLayers(lgraph, MeanSubtractionLayer('mean_sub_layer', 40));
     
     lgraph = connectLayers(lgraph, 'value', 'add/in1');
     lgraph = connectLayers(lgraph, 'advantage', 'mean_sub_layer/in');
