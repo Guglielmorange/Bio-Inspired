@@ -1,5 +1,5 @@
 function [qNetwork, episodeRewards] = train_scopa_agent()
-    % --- Hyperparameters for Phase 2 ---
+    % Hyperparameters
     numEpisodes = 25000;
     initialLearningRate = 0.00025;
     minLearningRate = 0.00001;
@@ -8,12 +8,12 @@ function [qNetwork, episodeRewards] = train_scopa_agent()
     epsilon = 1.0;
     epsilonDecay = 0.9999;
     minEpsilon = 0.1;
-    gamma = 0.95; 
-    batchSize = 512;
+    gamma = 0.85; 
+    batchSize = 1024;
     bufferCapacity = 100000;
     tau = 1e-3;
     
-    % Parameters for the Opponent Pool
+    % Parameters Opponent Pool
     opponentUpdateFrequency = 2500;
     opponentPoolSize = 30;
     evaluationFrequency = 500;
@@ -21,12 +21,12 @@ function [qNetwork, episodeRewards] = train_scopa_agent()
     resultsFolder = 'Results';
     if ~exist(resultsFolder, 'dir'); mkdir(resultsFolder); end
     
-    % --- Initialize Networks ---
+    % Initialize Networks
     qNetwork = create_network();
     targetNetwork = create_network();
     targetNetwork.Learnables = qNetwork.Learnables;
     
-    % --- Initialize the Opponent Pool ---
+    % Initialize the Opponent Pool
     opponentPool = cell(opponentPoolSize, 1);
     for i = 1:opponentPoolSize
         pool_net = create_network();
@@ -39,14 +39,14 @@ function [qNetwork, episodeRewards] = train_scopa_agent()
     optimizerState.averageSqGrad = [];
     iteration = 0;
     
-    % --- REVERTED: Using a standard, uniform replay buffer ---
+    % Replay Buffer
     replayBuffer = struct('state', cell(bufferCapacity,1), 'action', [], 'reward', [], 'next_state', [], 'done', []);
     bufferPointer = 1;
     bufferSize = 0;
     
     episodeRewards = zeros(numEpisodes, 1);
     
-    fprintf('--- Starting Training (Phase 2 Stable) for %d Episodes ---\n', numEpisodes);
+    fprintf('--- Starting Training for %d Episodes ---\n', numEpisodes);
     for episode = 1:numEpisodes
         gameState = reset_scopa_env();
         opponentNetwork = opponentPool{randi(opponentPoolSize)};
@@ -90,7 +90,6 @@ function [qNetwork, episodeRewards] = train_scopa_agent()
                 
                 if is_agent_turn
                     totalReward = totalReward + reward;
-                    % --- REVERTED: Storing experience in the standard buffer ---
                     replayBuffer(bufferPointer) = struct('state', preprocess_state(gameState), 'action', chosen_action.played_card.CardID, 'reward', reward, 'next_state', preprocess_state(next_game_state), 'done', done);
                     bufferPointer = mod(bufferPointer, bufferCapacity) + 1;
                     bufferSize = min(bufferSize + 1, bufferCapacity);
@@ -106,12 +105,10 @@ function [qNetwork, episodeRewards] = train_scopa_agent()
         learningRate = max(minLearningRate, learningRate * lrDecayRate);
         
         if bufferSize >= batchSize
-            % --- REVERTED: Uniformly sample from the standard buffer ---
             batchIndices = randperm(bufferSize, batchSize);
             batch = replayBuffer(batchIndices);
             iteration = iteration + 1; 
         
-            % --- REVERTED: Call the simpler update function ---
             [qNetwork, optimizerState, ~] = update_network(qNetwork, targetNetwork, optimizerState, batch, gamma, learningRate, iteration);
             
             % Soft update the target network

@@ -3,8 +3,6 @@ function deck = create_deck()
     suits = {'Coppe'; 'Denari'; 'Bastoni'; 'Spade'};
     ranks = (1:10)';
     
-    % --- CHANGE: The value of a card for summing is its rank ---
-    % An 8 is worth 8, a 9 is worth 9, and a 10 is worth 10 for captures.
     values = (1:10)'; 
 
     primiera_values = [16, 12, 13, 14, 15, 18, 21, 10, 10, 10]';
